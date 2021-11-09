@@ -35,21 +35,23 @@ class PHPUnit_Util_Getopt
         reset($args);
         array_map('trim', $args);
 
-        while (list($i, $arg) = each($args)) {
+        while(count($args) > 0) {
+            $arg = array_shift($args);
             if ($arg == '') {
                 continue;
             }
 
             if ($arg == '--') {
-                $non_opts = array_merge($non_opts, array_slice($args, $i + 1));
+                $non_opts = array_merge($non_opts, array_slice($args, 1));
                 break;
             }
 
             if ($arg[0] != '-' ||
                 (strlen($arg) > 1 && $arg[1] == '-' && !$long_options)) {
-                $non_opts[] = $args[$i];
+                $non_opts[] = $arg;
                 continue;
-            } elseif (strlen($arg) > 1 && $arg[1] == '-') {
+            } 
+            elseif (strlen($arg) > 1 && $arg[1] == '-') {
                 self::parseLongOption(
                     substr($arg, 2),
                     $long_options,
@@ -94,8 +96,11 @@ class PHPUnit_Util_Getopt
                     if ($i + 1 < $argLen) {
                         $opts[] = array($opt, substr($arg, $i + 1));
                         break;
-                    } elseif (list(, $opt_arg) = each($args)) {
-                    } else {
+                    } 
+                    elseif (strlen($args[0])) {
+                        $opt_arg = array_shift($args);
+                    } 
+                    else {
                         throw new PHPUnit_Framework_Exception(
                             "option requires an argument -- $opt"
                         );
@@ -139,11 +144,15 @@ class PHPUnit_Util_Getopt
 
             if (substr($long_opt, -1) == '=') {
                 if (substr($long_opt, -2) != '==') {
-                    if (!strlen($opt_arg) &&
-                        !(list(, $opt_arg) = each($args))) {
-                        throw new PHPUnit_Framework_Exception(
-                            "option --$opt requires an argument"
-                        );
+                    if (!strlen($opt_arg)) {
+                        if(strlen($args[0])) {
+                            $opt_arg = array_shift($args);
+                        }
+                        else {
+                            throw new PHPUnit_Framework_Exception(
+                                "option --$opt requires an argument"
+                            );
+                        }
                     }
                 }
             } elseif ($opt_arg) {
