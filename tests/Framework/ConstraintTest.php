@@ -2877,7 +2877,11 @@ EOF
         // Default case.
         $constraint = new PHPUnit_Framework_Constraint_TraversableContains('foo');
 
-        $this->assertTrue($constraint->evaluate(array(0), '', true));
+        if (PHP_MAJOR_VERSION < 8) {
+            $this->assertTrue($constraint->evaluate(array(0), '', true));
+        } else {
+            $this->assertFalse($constraint->evaluate(array(0), '', true));
+        }
         $this->assertTrue($constraint->evaluate(array(true), '', true));
     }
 
