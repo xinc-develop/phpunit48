@@ -44,7 +44,7 @@ class Framework_Constraint_JsonMatches_ErrorMessageProviderTest extends PHPUnit_
     {
         return array(
             'JSON_ERROR_NONE'  => array(
-                null, 'json_error_none', ''
+                null, JSON_ERROR_NONE, ''
             ),
             'JSON_ERROR_DEPTH' => array(
                 'Maximum stack depth exceeded', JSON_ERROR_DEPTH, ''
